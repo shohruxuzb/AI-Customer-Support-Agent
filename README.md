@@ -1,78 +1,51 @@
-# AI Customer Support Chatbot 🤖
+# AI Customer Support Agent
 
-A production-ready full-stack AI Customer Support Chatbot that uses RAG (Retrieval-Augmented Generation) to answer questions based on your specialized documents (PDF/Text).
+This is a full-stack, production-ready AI Customer Support Chatbot built with **FastAPI** (Backend) and **Streamlit** (Frontend).
+The agent supports RAG (Retrieval-Augmented Generation) so businesses can upload their own files (.pdf or .txt) and let the chatbot answer user queries based on those documents. It uses `sentence-transformers` for local embeddings and `FAISS` for quick vector storage and search.
 
-## 🚀 Features
-- **Document Ingestion**: Upload PDF or TXT files to automatically "train" your agent.
-- **RAG Architecture**: Uses FAISS for lightning-fast similarity search and Groq (Llama 3.3) for intelligent responses.
-- **Shared Context**: Singleton-based backend ensures uploaded data is immediately available for chat.
-- **Streamlit Interface**: A clean, responsive UI with chat history and typing indicators.
-- **Persistent Memory**: Remembers recent conversation history for more natural interactions.
+## Features
+- **Multi-LLM Support:** Choose between OpenAI and Groq APIs dynamically during your session.
+- **Local RAG Pipeline:** Generates chunks and embeddings entirely locally using `all-MiniLM-L6-v2`, meaning you are not billed for embedding API calls.
+- **Session-based Security:** API Keys are entered in the UI and are not hardcoded or saved anywhere in the repository. Provide it per session.
+- **Modern UI:** Built using Streamlit, featuring file upload, chat history limits, usage limits (demo mode fallback), and chat UI.
 
-## 🛠️ Tech Stack
-- **Backend**: FastAPI (Python)
-- **Frontend**: Streamlit
-- **LLM**: Groq AI API (`llama-3.3-70b-versatile`)
-- **Vector DB**: FAISS (Meta)
-- **Embeddings**: `all-MiniLM-L6-v2` (Sentence Transformers)
+## Tech Stack
+- **Backend:** Python, FastAPI, PyPDF
+- **Frontend:** Streamlit
+- **Embeddings:** `sentence-transformers`
+- **Vector Store:** `faiss-cpu`
+- **LLM APIs:** `openai`, `groq`
 
-## 📋 Prerequisites
-- Python 3.9+
-- Groq API Key (Get one at [console.groq.com](https://console.groq.com/))
+## Setup & Run Instructions
 
-## ⚙️ Installation & Setup
+### 1. Install Dependencies
 
-### 1. Clone & Environment
+Ensure you have Python installed. You can construct a virtual environment if you prefer. Then, install the requirements:
+
 ```bash
-# Clone the repository (if applicable)
-cd AI-Customer-Support-Agent
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Configuration
-Create a `.env` file in the root directory (or use the provided template):
-```text
-GROQ_API_KEY=your_gsk_xxx_key
-MODEL_NAME=llama-3.3-70b-versatile
-EMBEDDING_MODEL=all-MiniLM-L6-v2
-```
+*(Note: The very first time you run the backend, `sentence-transformers` will download the `all-MiniLM-L6-v2` model weights locally ~80MB).*
 
-### 3. Running the App
-The application consists of two parts running simultaneously.
+### 2. Start the Backend
 
-#### **Start Backend**
+In a terminal, start the FastAPI server:
 ```bash
 uvicorn backend.main:app --reload
 ```
+The backend API will run on `http://127.0.0.1:8000`.
 
-#### **Start Frontend**
+### 3. Start the Frontend
+
+Open a new terminal window and run the Streamlit app:
 ```bash
 streamlit run frontend/app.py
 ```
+This will open your browser to `http://localhost:8501`.
 
-## 📂 Project Structure
-```text
-backend/
-  main.py           # Application entry point
-  routes/           # API endpoints (upload, chat)
-  services/         # Core logic (FAISS, Groq, Singletons)
-  utils/            # Document processing utilities
-  vector_store/     # Persistent storage for indices
-frontend/
-  app.py            # Streamlit Chat UI
-requirements.txt    # Python dependencies
-.env                # Local configuration
-.gitignore          # Git exclusion rules
-```
-
-## 🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-This project is licensed under the MIT License.
+## Usage
+1. Open the UI.
+2. In the Sidebar, select your preferred provider and input the API Key if available.
+3. Upload a PDF or TXT using the Document Uploader in the sidebar and click **Process Document**.
+4. Ask questions in the main chat interface about the loaded documents!

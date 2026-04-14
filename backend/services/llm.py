@@ -1,49 +1,98 @@
 import os
-from groq import AsyncGroq
-from dotenv import load_dotenv
-from typing import List, Dict
+from openai import OpenAI
+from groq import Groq
+from typing import List
 
-load_dotenv()
+class LLMProvider:
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+        
+    def generate_response(self, query: str, context: List[str], history: List) -> str:
+        raise NotImplementedError
 
-class LLMService:
-    def __init__(self, model_name: str = "llama-3.3-70b-versatile"):
-        self.api_key = os.getenv("GROQ_API_KEY")
+class OpenAILLM(LLMProvider):
+    def generate_response(self, query: str, context: List[str], history: List) -> str:
         if not self.api_key:
-            raise ValueError("GROQ_API_KEY not found in environment variables")
+            return "Error: OpenAI API Key is missing. Please provide it in the sidebar."
         
-        self.client = AsyncGroq(api_key=self.api_key)
-        self.model_name = model_name
-
-    async def get_response(self, query: str, context: List[str], chat_history: List[Dict[str, str]]) -> str:
-        # Build context string
-        context_str = "\n\n".join(context)
-        
-        # System prompt for Customer Support Persona
-        system_prompt = (
-            "You are a helpful and professional customer support agent for a business. "
-            "Use the provided context to answer the user's questions. "
-            "If the answer is not in the context, politely inform the user that you don't have that information. "
-            "Keep your responses concise and friendly."
-        )
-        
-        # Construct messages
-        messages = [{"role": "system", "content": system_prompt}]
-        
-        # Add chat history (last few messages)
-        for msg in chat_history[-5:]: # Keep last 5 messages for memory
-            messages.append(msg)
-            
-        # Add user query with context
-        user_content = f"Context:\n{context_str}\n\nUser Question: {query}"
-        messages.append({"role": "user", "content": user_content})
-
         try:
-            completion = await self.client.chat.completions.create(
+            client = OpenAI(api_key=self.api_key)
+            system_prompt = self._build_system_prompt(context)
+            
+            messages = [{"role": "system", "content": system_prompt}]
+            for msg in history:
+                messages.append({"role": msg.role, "content": msg.content})
+            messages.append({"role": "user", "content": query})
+            
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
                 messages=messages,
-                model=self.model_name,
-                temperature=0.7,
-                max_tokens=1024
+                temperature=0.2
             )
-            return completion.choices[0].message.content
+            return response.choices[0].message.content
         except Exception as e:
-            return f"Error communicating with LLM: {str(e)}"
+            return f"OpenAI API Error: {str(e)}"
+
+    def _build_system_prompt(self, context: List[str]) -> str:
+        prompt = (
+            "You are a helpful AI Customer Support Assistant.\n"
+            "Use the provided context to answer the user's query.\n"
+            "If the answer is not in the context, politely say 'I don't have enough information to answer that based on the provided documents.'\n\n"
+        )
+        if context:
+            prompt += "Context:\n" + "\n---\n".join(context)
+        else:
+            prompt += "Context:\nNo documents have been uploaded yet."
+        return prompt
+
+
+class GroqLLM(LLMProvider):
+    def generate_response(self, query: str, context: List[str], history: List) -> str:
+        if not self.api_key:
+            return "Error: Groq API Key is missing. Please provide it in the sidebar."
+        
+        try:
+            client = Groq(api_key=self.api_key)
+            system_prompt = self._build_system_prompt(context)
+            
+            messages = [{"role": "system", "content": system_prompt}]
+            for msg in history:
+                messages.append({"role": msg.role, "content": msg.content})
+            messages.append({"role": "user", "content": query})
+            
+            response = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",  # Fast and reliable Groq model
+                messages=messages,
+                temperature=0.2
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            return f"Groq API Error: {str(e)}"
+
+    def _build_system_prompt(self, context: List[str]) -> str:
+        prompt = (
+            "You are a helpful AI Customer Support Assistant.\n"
+            "Use the provided context to answer the user's query.\n"
+            "If the answer is not in the context, politely say 'I don't have enough information to answer that based on the provided documents.'\n\n"
+        )
+        if context:
+            prompt += "Context:\n" + "\n---\n".join(context)
+        else:
+            prompt += "Context:\nNo documents have been uploaded yet."
+        return prompt
+
+
+def get_llm(provider: str, api_key: str) -> LLMProvider:
+    """
+    Factory function to get the appropriate LLM provider.
+    Falls back to environment variables if no API key is set by user, useful for a demo mode.
+    """
+    if not api_key:
+        api_key = os.environ.get(f"{provider.upper()}_API_KEY", "")
+        
+    if provider.lower() == "openai":
+        return OpenAILLM(api_key)
+    elif provider.lower() == "groq":
+        return GroqLLM(api_key)
+    else:
+        raise ValueError("Unsupported provider. Choose 'openai' or 'groq'.")
