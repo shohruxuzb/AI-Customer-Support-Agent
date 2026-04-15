@@ -1,8 +1,14 @@
 from typing import List
 from sentence_transformers import SentenceTransformer
 
-# Load the model directly here. It will download the model on the first run.
-_embedder = SentenceTransformer("all-MiniLM-L6-v2")
+_embedder = None
+
+def get_embedder():
+    global _embedder
+    if _embedder is None:
+        from sentence_transformers import SentenceTransformer
+        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+    return _embedder
 
 def chunk_text(text: str, chunk_words: int = 400, overlap: int = 50) -> List[str]:
     """
@@ -33,11 +39,11 @@ def generate_embeddings(chunks: List[str]):
     if not chunks:
         import numpy as np
         return np.array([])
-    embeddings = _embedder.encode(chunks, convert_to_numpy=True)
+    embeddings = get_embedder().encode(chunks, convert_to_numpy=True)
     return embeddings
 
 def embed_query(query: str):
     """
     Generate embedding for a single query.
     """
-    return _embedder.encode([query], convert_to_numpy=True)[0]
+    return get_embedder().encode([query], convert_to_numpy=True)[0]

@@ -10,14 +10,19 @@ METADATA_FILE = "metadata.json"
 class VectorStore:
     def __init__(self, dimension: int = 384):
         self.dimension = dimension
-        self.index = faiss.IndexFlatL2(dimension)
-        self.metadata: List[str] = [] # stores the chunks corresponding to embeddings
-        self.load()
+        self.index = None
+        self.metadata: List[str] = [] 
+
+    def _initialize(self):
+        if self.index is None:
+            self.index = faiss.IndexFlatL2(self.dimension)
+            self.load()
 
     def add_texts(self, chunks: List[str], embeddings: np.ndarray):
         if len(chunks) == 0:
             return
         
+        self._initialize()
         # Add to FAISS index
         self.index.add(embeddings)
         # Update metadata
@@ -25,6 +30,7 @@ class VectorStore:
         self.save()
 
     def search(self, query_embedding: np.ndarray, top_k: int = 3) -> List[str]:
+        self._initialize()
         if self.index.ntotal == 0:
             return []
         

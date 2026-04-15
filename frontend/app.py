@@ -100,7 +100,7 @@ if prompt := st.chat_input("Ask a question about the uploaded documents..."):
     recent_history = st.session_state.messages[-5:-1]
 
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
+        with st.spinner("Starting AI system / generating answer... please wait (this can take 30-60 seconds on the free tier on the very first run!)"):
             payload = {
                 "query": prompt,
                 "history": recent_history,
