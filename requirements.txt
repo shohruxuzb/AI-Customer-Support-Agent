@@ -1,15 +1,12 @@
---extra-index-url https://download.pytorch.org/whl/cpu
-
 fastapi>=0.100.0
 uvicorn>=0.23.0
 python-multipart>=0.0.6
 pydantic>=2.0.0
 pypdf>=3.14.0
-torch
-sentence-transformers>=2.2.2
 faiss-cpu>=1.7.4
 openai>=1.0.0
 groq>=0.4.0
 streamlit>=1.26.0
 requests>=2.31.0
 python-dotenv>=1.0.0
+fastembed>=0.2.0

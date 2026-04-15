@@ -1,13 +1,12 @@
 from typing import List
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 
 _embedder = None
 
 def get_embedder():
     global _embedder
     if _embedder is None:
-        from sentence_transformers import SentenceTransformer
-        _embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        _embedder = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
     return _embedder
 
 def chunk_text(text: str, chunk_words: int = 400, overlap: int = 50) -> List[str]:
@@ -39,11 +38,13 @@ def generate_embeddings(chunks: List[str]):
     if not chunks:
         import numpy as np
         return np.array([])
-    embeddings = get_embedder().encode(chunks, convert_to_numpy=True)
-    return embeddings
+    embeddings_list = list(get_embedder().embed(chunks))
+    import numpy as np
+    return np.vstack(embeddings_list)
 
 def embed_query(query: str):
     """
     Generate embedding for a single query.
     """
-    return get_embedder().encode([query], convert_to_numpy=True)[0]
+    embeddings_list = list(get_embedder().embed([query]))
+    return embeddings_list[0]

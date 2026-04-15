@@ -120,7 +120,7 @@ if prompt := st.chat_input("Ask a question about the uploaded documents..."):
                     detail = res.json().get("detail", "Server Error")
                     answer = f"**Error from Backend:** {detail}"
             except Exception as e:
-                answer = "**Connection Error:** Could not connect to the backend server. Please ensure FastAPI is running."
+                answer = "**Connection Error:** Could not connect to the backend server. The free Render tier may take a minute to wake up, or FastAPI failed to connect. Ensure your API Key is valid."
 
             st.markdown(answer)
     
