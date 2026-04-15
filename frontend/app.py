@@ -1,8 +1,10 @@
 import streamlit as st
 import requests
 
-# FastAPI Backend URL
-API_URL = "http://127.0.0.1:8000/api"
+import os
+
+# FastAPI Backend URL - allows Render override via Environment Variables
+API_URL = os.environ.get("BACKEND_URL", "http://127.0.0.1:8000/api")
 
 # Page configuration
 st.set_page_config(page_title="AI Customer Support", page_icon="💬", layout="wide")
