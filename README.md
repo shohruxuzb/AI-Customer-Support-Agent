@@ -1,51 +1,118 @@
-# AI Customer Support Agent
+# 🤖 AI Customer Support Chatbot (RAG-based)
 
-This is a full-stack, production-ready AI Customer Support Chatbot built with **FastAPI** (Backend) and **Streamlit** (Frontend).
-The agent supports RAG (Retrieval-Augmented Generation) so businesses can upload their own files (.pdf or .txt) and let the chatbot answer user queries based on those documents. It uses `sentence-transformers` for local embeddings and `FAISS` for quick vector storage and search.
+An AI-powered customer support chatbot that answers user questions based on business documents (PDF/TXT).  
+It uses Retrieval-Augmented Generation (RAG) to provide accurate, context-aware responses.
 
-## Features
-- **Multi-LLM Support:** Choose between OpenAI and Groq APIs dynamically during your session.
-- **Local RAG Pipeline:** Generates chunks and embeddings entirely locally using `all-MiniLM-L6-v2`, meaning you are not billed for embedding API calls.
-- **Session-based Security:** API Keys are entered in the UI and are not hardcoded or saved anywhere in the repository. Provide it per session.
-- **Modern UI:** Built using Streamlit, featuring file upload, chat history limits, usage limits (demo mode fallback), and chat UI.
+---
 
-## Tech Stack
-- **Backend:** Python, FastAPI, PyPDF
-- **Frontend:** Streamlit
-- **Embeddings:** `sentence-transformers`
-- **Vector Store:** `faiss-cpu`
-- **LLM APIs:** `openai`, `groq`
+## 🌐 Live Demo
 
-## Setup & Run Instructions
+👉 https://ai-customer-support-agent-6umj.onrender.com  
 
-### 1. Install Dependencies
+⚠️ Note: The app may take 30–60 seconds to load initially due to free hosting.
 
-Ensure you have Python installed. You can construct a virtual environment if you prefer. Then, install the requirements:
+---
 
-```bash
+## 🎥 Demo Video
+
+👉 https://youtu.be/E7walQGG9f8
+
+---
+
+## 💼 Business Value
+
+This solution helps businesses:
+
+- Reduce customer support workload  
+- Provide instant answers to FAQs  
+- Enable 24/7 automated support  
+- Improve response time and customer experience  
+
+---
+
+## ✨ Features
+
+- 💬 Chat interface (AI assistant style)
+- 📄 Upload PDF or TXT documents
+- 🧠 Answers based on your data (RAG)
+- 🔎 Fast semantic search using FAISS
+- 🧾 Chat memory (context-aware responses)
+- 🔑 Supports user-provided API keys (Groq / OpenAI)
+- ⚡ Lightweight and fast
+
+---
+
+## 🧠 Example Use Case
+
+1. Upload a company FAQ document  
+2. Ask:
+   > "What is your refund policy?"  
+3. AI responds using information from the document  
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend:** FastAPI  
+- **Frontend:** Streamlit  
+- **Vector DB:** FAISS  
+- **Embeddings:** sentence-transformers (`all-MiniLM-L6-v2`)  
+- **LLM:** Groq / OpenAI  
+
+---
+
+## ⚙️ How to Run Locally
+
+bash
+git clone https://github.com/shohruxuzb/AI-Customer-Support-Agent.git
+cd AI-Customer-Support-Agent
+
 pip install -r requirements.txt
-```
 
-*(Note: The very first time you run the backend, `sentence-transformers` will download the `all-MiniLM-L6-v2` model weights locally ~80MB).*
-
-### 2. Start the Backend
-
-In a terminal, start the FastAPI server:
-```bash
+# Run backend
 uvicorn backend.main:app --reload
-```
-The backend API will run on `http://127.0.0.1:8000`.
 
-### 3. Start the Frontend
-
-Open a new terminal window and run the Streamlit app:
-```bash
+# Run frontend
 streamlit run frontend/app.py
-```
-This will open your browser to `http://localhost:8501`.
+🚀 Deployment
 
-## Usage
-1. Open the UI.
-2. In the Sidebar, select your preferred provider and input the API Key if available.
-3. Upload a PDF or TXT using the Document Uploader in the sidebar and click **Process Document**.
-4. Ask questions in the main chat interface about the loaded documents!
+You can deploy this project using:
+
+Render
+Railway
+Example (Render):
+Build command:
+pip install -r requirements.txt
+Start command:
+streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0
+🔐 API Key Usage
+
+To use the chatbot:
+
+Enter your Groq or OpenAI API key in the app
+Keys are used only during the session and are not stored
+📸 Screenshots
+
+<img width="365" height="913" alt="Screenshot 2026-04-15 121335" src="https://github.com/user-attachments/assets/03d1559c-e95b-4f93-85fa-216d2f01d6ad" />
+<img width="1911" height="909" alt="Screenshot 2026-04-15 121317" src="https://github.com/user-attachments/assets/f3b4d533-71fa-4355-96c4-04c3388fb39e" />
+
+
+Chat interface
+File upload
+AI response
+🧩 Use Cases
+Customer support chatbot
+FAQ automation
+Internal knowledge assistant
+Document Q&A system
+📈 Future Improvements
+Multi-language support
+Admin dashboard
+WhatsApp / Telegram integration
+Database storage for conversations
+👨‍💻 Author
+
+Built by Shohruh
+
+## 📞 Available for Freelance Work
+I can build custom AI chatbots and automation tools for your business.
